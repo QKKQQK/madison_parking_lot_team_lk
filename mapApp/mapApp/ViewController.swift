@@ -12,12 +12,54 @@ import MapKit
 class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDelegate{
     
     @IBAction func navigateTapped(_ sender: Any) {
+        if isNavigating {
+            myMap.removeOverlays(myMap.overlays)
+            isNavigating = false
+            setRegionToUserLocation()
+            return
+        }
         guard let annotaion = currAnnotation
             else {
             print("No annotation selected")
             return
         }
-        print(annotaion.subtitle!!)
+        guard let location = currentLocation
+            else {
+            return
+        }
+        let source = MKPlacemark(coordinate: location.coordinate)
+        let destination = MKPlacemark(coordinate: annotaion.coordinate)
+        let directionRequest = MKDirectionsRequest()
+        directionRequest.source = MKMapItem(placemark: source)
+        directionRequest.destination = MKMapItem(placemark: destination)
+        directionRequest.transportType = .automobile
+        
+        let direction = MKDirections(request: directionRequest)
+        direction.calculate(completionHandler: {
+            response, error in
+            guard let response = response
+                else {
+                    if let error = error {
+                        print(error)
+                    }
+                    return
+            }
+            let route = response.routes[0]
+            self.myMap.add(route.polyline, level: .aboveRoads)
+            
+            var start = route.polyline.boundingMapRect
+            start.size.width *= 1.5
+            start.size.height *= 1.5
+            self.myMap.setRegion(MKCoordinateRegionForMapRect(start), animated: true)
+        })
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(overlay: overlay)
+        renderer.strokeColor = UIColor.green
+        renderer.lineWidth = 5.0
+        isNavigating = true
+        return renderer
     }
     
     @IBOutlet weak var myMap: MKMapView!
@@ -27,6 +69,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
     var initSet = false
     var allAnnotation : [MKAnnotation] = []
     var currAnnotation : MKAnnotation?
+    var isNavigating = false
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         self.currAnnotation = nil
@@ -121,12 +164,20 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         if let currLocation = locations.first {
             currentLocation = currLocation
             if !initSet {
-                let center = currentLocation?.coordinate
-                let region = MKCoordinateRegion(center: center!, span: span)
-                myMap.setRegion(region, animated: true)
+                setRegionToUserLocation()
                 initSet = true
             }
         }
+    }
+    
+    func setRegionToUserLocation() {
+        guard let userLocation = currentLocation
+            else {
+            return
+        }
+        let center = userLocation.coordinate
+        let region = MKCoordinateRegion(center: center, span: span)
+        myMap.setRegion(region, animated: true)
     }
 }
 
