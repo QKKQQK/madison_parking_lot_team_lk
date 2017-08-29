@@ -11,11 +11,13 @@ import MapKit
 
 class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDelegate{
     
+    @IBOutlet weak var navgationButton: UIBarButtonItem!
     @IBAction func navigateTapped(_ sender: Any) {
         if isNavigating {
             myMap.removeOverlays(myMap.overlays)
             isNavigating = false
             setRegionToUserLocation()
+            self.navgationButton.title = "Navigate"
             return
         }
         guard let annotaion = currAnnotation
@@ -48,9 +50,12 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
             self.myMap.add(route.polyline, level: .aboveRoads)
             
             var start = route.polyline.boundingMapRect
-            start.size.width *= 1.5
-            start.size.height *= 1.5
+            start.size.width *= 1.3
+            start.size.height *= 1.3
+            start.origin.x -= start.size.width * 0.15
+            start.origin.y -= start.size.height * 0.15
             self.myMap.setRegion(MKCoordinateRegionForMapRect(start), animated: true)
+            self.navgationButton.title = "Stop Navigation"
         })
     }
     

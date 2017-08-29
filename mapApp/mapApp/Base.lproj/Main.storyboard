@@ -60,6 +60,7 @@
                     <navigationItem key="navigationItem" id="H8H-Ys-HkJ"/>
                     <connections>
                         <outlet property="myMap" destination="NAc-Tt-ewi" id="UHB-se-lh8"/>
+                        <outlet property="navgationButton" destination="Mxn-JD-pn0" id="1cy-sa-eIB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
