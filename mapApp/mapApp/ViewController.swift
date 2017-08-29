@@ -27,8 +27,12 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
         initAltLocation()
         showCompass()
         showTrackingButton()
-        addrToPlaceMark("1 S. Butler St, Madison, WI")
-        addrToPlaceMark("218 E. Mifflin St, Madison, WI")
+        addrToPlaceMark(addressDictionary["Brayton Lot"] ?? "")
+        addrToPlaceMark(addressDictionary["Capitol Square North Garage"] ?? "")
+        addrToPlaceMark(addressDictionary["Government East Garage"] ?? "")
+        addrToPlaceMark(addressDictionary["Overture Center Garage"] ?? "")
+        addrToPlaceMark(addressDictionary["State Street Campus Garage"] ?? "")
+        addrToPlaceMark(addressDictionary["State Street Capitol Garage"] ?? "")
     }
     
     func addrToPlaceMark(_ addr: String){
