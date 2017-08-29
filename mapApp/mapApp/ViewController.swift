@@ -11,12 +11,35 @@ import MapKit
 
 class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDelegate{
     
+    @IBAction func navigateTapped(_ sender: Any) {
+        guard let annotaion = currAnnotation
+            else {
+            print("No annotation selected")
+            return
+        }
+        print(annotaion.subtitle!!)
+    }
+    
     @IBOutlet weak var myMap: MKMapView!
     var locationManager: CLLocationManager?
     var currentLocation: CLLocation?
     var span = MKCoordinateSpanMake(0.035, 0.035)
     var initSet = false
     var allAnnotation : [MKAnnotation] = []
+    var currAnnotation : MKAnnotation?
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        self.currAnnotation = nil
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        guard view.annotation != nil
+            else {
+                print("No annotation")
+                return
+        }
+        self.currAnnotation = view.annotation!
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +88,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         let button = MKUserTrackingButton(mapView: myMap)
         button.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(button)
-        NSLayoutConstraint.activate([button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10), button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)])
+        NSLayoutConstraint.activate([button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -3), button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -3)])
     }
     
     func showCompass() {
