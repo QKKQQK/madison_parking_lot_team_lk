@@ -27,30 +27,27 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
         initAltLocation()
         showCompass()
         showTrackingButton()
-        addrToPlaceMark(addressDictionary["Brayton Lot"] ?? "")
-        addrToPlaceMark(addressDictionary["Capitol Square North Garage"] ?? "")
-        addrToPlaceMark(addressDictionary["Government East Garage"] ?? "")
-        addrToPlaceMark(addressDictionary["Overture Center Garage"] ?? "")
-        addrToPlaceMark(addressDictionary["State Street Campus Garage"] ?? "")
-        addrToPlaceMark(addressDictionary["State Street Capitol Garage"] ?? "")
+        addrToPlaceMark(addressDictionary)
     }
     
-    func addrToPlaceMark(_ addr: String){
-        let geoCoder = CLGeocoder()
-        geoCoder.geocodeAddressString(addr) {
-            (placemarks, error) in
-            guard let placemark = placemarks?.first
-                else {
-                print("GeoCoder fail")
-                return
+    func addrToPlaceMark(_ addrBook: Dictionary<String, String>){
+        for addr in addrBook.keys {
+            let geoCoder = CLGeocoder()
+            geoCoder.geocodeAddressString(addrBook[addr] ?? "") {
+                (placemarks, error) in
+                guard let placemark = placemarks?.first
+                    else {
+                    print("GeoCoder fail")
+                    return
+                }
+                let lat = placemark.location?.coordinate.latitude
+                let lon = placemark.location?.coordinate.longitude
+                let annotation = MKPointAnnotation()
+                annotation.title = "Availability Count"
+                annotation.subtitle = addr.description
+                annotation.coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
+                self.myMap.addAnnotation(annotation)
             }
-            let lat = placemark.location?.coordinate.latitude
-            let lon = placemark.location?.coordinate.longitude
-            let annotation = MKPointAnnotation()
-            annotation.title = "Availability Count"
-            annotation.subtitle = "Name of garage"
-            annotation.coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
-            self.myMap.addAnnotation(annotation)
         }
     }
     
