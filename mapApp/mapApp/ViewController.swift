@@ -15,6 +15,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     var locationManager: CLLocationManager?
     var currentLocation: CLLocation?
     var span = MKCoordinateSpanMake(0.005, 0.005)
+    var initSet = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,15 +23,27 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationPermissin()
-        let span = MKCoordinateSpanMake(0.02, 0.02)
         let altLocation = CLLocationCoordinate2D(latitude: 43.0731,
                                                  longitude: -89.4012)
         let region = MKCoordinateRegion(center: altLocation, span: span)
         myMap.setRegion(region, animated: true)
         myMap.showsUserLocation = true
-        /*let compass = MKCompassButton(mapView: myMap)
+        showCompass()
+        showTrackingButton()
+    }
+    
+    func showTrackingButton() {
+        let button = MKUserTrackingButton(mapView: myMap)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(button)
+        NSLayoutConstraint.activate([button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10), button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)])
+    }
+    
+    func showCompass() {
+        let compass = MKCompassButton(mapView: myMap)
         compass.compassVisibility = .visible
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: compass)*/
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: compass)
+        myMap.showsCompass = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,9 +68,12 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let currLocation = locations.first {
             currentLocation = currLocation
-            let center = currentLocation?.coordinate
-            let region = MKCoordinateRegion(center: center!, span: span)
-            myMap.setRegion(region, animated: true)
+            if !initSet {
+                let center = currentLocation?.coordinate
+                let region = MKCoordinateRegion(center: center!, span: span)
+                myMap.setRegion(region, animated: true)
+                initSet = true
+            }
         }
     }
 }
