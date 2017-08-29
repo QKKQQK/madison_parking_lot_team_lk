@@ -22,14 +22,40 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
         // Do any additional setup after loading the view, typically from a nib.
         locationManager = CLLocationManager()
         locationManager?.delegate = self
+        myMap.userTrackingMode = .follow
         locationPermissin()
-        let altLocation = CLLocationCoordinate2D(latitude: 43.0731,
-                                                 longitude: -89.4012)
+        initAltLocation()
+        showCompass()
+        showTrackingButton()
+        addrToPlaceMark("1 S. Butler St, Madison, WI")
+        addrToPlaceMark("218 E. Mifflin St, Madison, WI")
+    }
+    
+    func addrToPlaceMark(_ addr: String){
+        let geoCoder = CLGeocoder()
+        geoCoder.geocodeAddressString(addr) {
+            (placemarks, error) in
+            guard let placemark = placemarks?.first
+                else {
+                print("GeoCoder fail")
+                return
+            }
+            let lat = placemark.location?.coordinate.latitude
+            let lon = placemark.location?.coordinate.longitude
+            let annotation = MKPointAnnotation()
+            annotation.title = "0"
+            annotation.coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
+            self.myMap.addAnnotation(annotation)
+        }
+    }
+    
+    
+    
+    func initAltLocation() {
+        let altLocation = CLLocationCoordinate2D(latitude: 43.0731, longitude: -89.4012)
         let region = MKCoordinateRegion(center: altLocation, span: span)
         myMap.setRegion(region, animated: true)
         myMap.showsUserLocation = true
-        showCompass()
-        showTrackingButton()
     }
     
     func showTrackingButton() {
