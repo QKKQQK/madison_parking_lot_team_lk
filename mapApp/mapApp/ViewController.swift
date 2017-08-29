@@ -17,17 +17,29 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
             myMap.removeOverlays(myMap.overlays)
             isNavigating = false
             setRegionToUserLocation()
-            self.navgationButton.title = "Navigate"
+            self.navgationButton.title = "Navigation"
             return
+        } else {
+            guard self.currAnnotation != nil
+                else {
+                return
+            }
+            self.navgationButton.title = "Stop Navigation"
+            self.isNavigating = true
         }
+        showRoute()
+    }
+    
+    func showRoute(){
+        myMap.removeOverlays(myMap.overlays)
         guard let annotaion = currAnnotation
             else {
-            print("No annotation selected")
-            return
+                print("No annotation selected")
+                return
         }
         guard let location = currentLocation
             else {
-            return
+                return
         }
         let source = MKPlacemark(coordinate: location.coordinate)
         let destination = MKPlacemark(coordinate: annotaion.coordinate)
@@ -55,8 +67,11 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
             start.origin.x -= start.size.width * 0.15
             start.origin.y -= start.size.height * 0.15
             self.myMap.setRegion(MKCoordinateRegionForMapRect(start), animated: true)
-            self.navgationButton.title = "Stop Navigation"
         })
+    }
+    
+    func updateAllAnnotations() {
+        
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -77,7 +92,9 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
     var isNavigating = false
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        self.currAnnotation = nil
+        if !isNavigating {
+            self.currAnnotation = nil
+        }
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -100,13 +117,14 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         initAltLocation()
         showCompass()
         showTrackingButton()
-        addrToPlaceMark(addressDictionary)
+        updateAllAnnotation()
     }
     
-    func addrToPlaceMark(_ addrBook: Dictionary<String, String>){
-        for addr in addrBook.keys {
+    func updateAllAnnotation(){
+        myMap.removeAnnotations(myMap.annotations)
+        for addr in addressDictionary.keys {
             let geoCoder = CLGeocoder()
-            geoCoder.geocodeAddressString(addrBook[addr] ?? "") {
+            geoCoder.geocodeAddressString(addressDictionary[addr] ?? "") {
                 (placemarks, error) in
                 guard let placemark = placemarks?.first
                     else {
@@ -171,6 +189,9 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
             if !initSet {
                 setRegionToUserLocation()
                 initSet = true
+            }
+            if isNavigating {
+                showRoute()
             }
         }
     }
