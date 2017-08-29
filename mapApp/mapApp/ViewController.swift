@@ -9,18 +9,20 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController,  CLLocationManagerDelegate{
+class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDelegate{
     
     @IBOutlet weak var myMap: MKMapView!
     var locationManager: CLLocationManager?
     var currentLocation: CLLocation?
     var span = MKCoordinateSpanMake(0.035, 0.035)
     var initSet = false
+    var allAnnotation : [MKAnnotation] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         locationManager = CLLocationManager()
+        myMap.delegate = self
         locationManager?.delegate = self
         myMap.userTrackingMode = .follow
         locationPermissin()
@@ -43,15 +45,14 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
                 let lat = placemark.location?.coordinate.latitude
                 let lon = placemark.location?.coordinate.longitude
                 let annotation = MKPointAnnotation()
-                annotation.title = "Availability Count"
+                annotation.title = "\(availabilityDictionary[addr] ?? 0)"
                 annotation.subtitle = addr.description
                 annotation.coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
                 self.myMap.addAnnotation(annotation)
+                self.allAnnotation.append(annotation)
             }
         }
     }
-    
-    
     
     func initAltLocation() {
         let altLocation = CLLocationCoordinate2D(latitude: 43.0731, longitude: -89.4012)

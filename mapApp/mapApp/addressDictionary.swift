@@ -16,3 +16,12 @@ public var addressDictionary = [
     "State Street Campus Garage" : "430 N. Frances St, Madison, WI",
     "State Street Capitol Garage" : "214 N. Carroll St, Madison, WI"
 ]
+
+public var availabilityDictionary = [
+    "Brayton Lot" : 1,
+    "Capitol Square North Garage" : 2,
+    "Government East Garage" : 3,
+    "Overture Center Garage" : 4,
+    "State Street Campus Garage" : 5,
+    "State Street Capitol Garage" : 6
+]
