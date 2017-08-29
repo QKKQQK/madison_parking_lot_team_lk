@@ -14,7 +14,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
     @IBOutlet weak var myMap: MKMapView!
     var locationManager: CLLocationManager?
     var currentLocation: CLLocation?
-    var span = MKCoordinateSpanMake(0.005, 0.005)
+    var span = MKCoordinateSpanMake(0.035, 0.035)
     var initSet = false
     
     override func viewDidLoad() {
@@ -43,7 +43,8 @@ class ViewController: UIViewController,  CLLocationManagerDelegate{
             let lat = placemark.location?.coordinate.latitude
             let lon = placemark.location?.coordinate.longitude
             let annotation = MKPointAnnotation()
-            annotation.title = "0"
+            annotation.title = "Availability Count"
+            annotation.subtitle = "Name of garage"
             annotation.coordinate = CLLocationCoordinate2D(latitude: lat!, longitude: lon!)
             self.myMap.addAnnotation(annotation)
         }
