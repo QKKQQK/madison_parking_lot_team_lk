@@ -1,7 +1,14 @@
 #Lijie & Kyle - Map App
 
-##Goals
-1. Build a map app using MapKit
-2. Process [JSON data](http://www.cityofmadison.com/parking-utility/data/ramp-availability.json) provided by City of Madison to display [parking availability](http://www.cityofmadison.com/parking-utility/garages-lots/current-hourly-parking-availability).
-3. Display nearby parking availability using Core Location
-4. Navigation
+## The map app should be tested on an iPhone instead of simulator
+#### Note: It works on the simulator, but the user location of simulator is in California, and simulator is really slow
+
+## Each annotation pin on the map represents a parking lot with data
+#### Note: the title is the number of available spaces, and the subtitle which is shown when clicked, is the name of the parking lot
+
+## Data of parking lots refresh every 20 second
+#### Note: If set to smaller time interval it may cause GeoCoder error
+
+## While navigating, route refresh whenever new user location data is available
+#### Note: You may see route blinking
+#### The app has been tested outside to ensure navigation works (driving only)
