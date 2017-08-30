@@ -106,6 +106,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         getData()
+        Timer.scheduledTimer(timeInterval: 20.0, target: self, selector: #selector(self.getData), userInfo: nil, repeats: true)
         locationManager = CLLocationManager()
         myMap.delegate = self
         locationManager?.delegate = self
@@ -123,6 +124,62 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         updateAllAnnotation()
     }
     
+    @objc func getData(){
+        var infos:[PakingInfo] = []
+        
+        let url = URL(string: "http://www.cityofmadison.com/parking-utility/data/ramp-availability.json")
+        var request = URLRequest(url: url!)
+        
+        request.httpMethod = "GET"
+        let session = URLSession.shared
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            print("start of closure")
+            
+            guard case let messageResponse as HTTPURLResponse = response else {
+                print("response error")
+                return
+            }
+            
+            guard let status = HTTPStatusCode(rawValue: messageResponse.statusCode) else {
+                print("status error")
+                return
+            }
+            
+            switch status {
+            case .ok:
+                print("success OK")
+                
+                guard let returnedData = data else {
+                    print("no data")
+                    return
+                }
+                
+                let decoder = JSONDecoder()
+                let newInfos = try? decoder.decode([PakingInfo].self, from: returnedData)
+                
+                infos = newInfos ?? []
+                
+                if infos.count == 6 {
+                    availabilityDictionary.updateValue(infos[0].vacant_stalls, forKey: "Brayton Lot")
+                    availabilityDictionary.updateValue(infos[1].vacant_stalls, forKey: "Capitol Square North Garage")
+                    availabilityDictionary.updateValue(infos[2].vacant_stalls, forKey: "Government East Garage")
+                    availabilityDictionary.updateValue(infos[3].vacant_stalls, forKey: "Overture Center Garage")
+                    availabilityDictionary.updateValue(infos[4].vacant_stalls, forKey: "State Street Campus Garage")
+                    availabilityDictionary.updateValue(infos[5].vacant_stalls, forKey: "State Street Capitol Garage")
+                    DispatchQueue.main.async {
+                        self.updateAllAnnotation()
+                    }
+                }
+                
+            //print(infos.description)
+            default:
+                print("status gone \(status)")
+            }
+        }
+        task.resume()
+    }
+    
     func updateAllAnnotation(){
         myMap.removeAnnotations(myMap.annotations)
         for addr in addressDictionary.keys {
@@ -131,7 +188,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
                 (placemarks, error) in
                 guard let placemark = placemarks?.first
                     else {
-                    print("GeoCoder fail")
+                    print(error)
                     return
                 }
                 let lat = placemark.location?.coordinate.latitude
