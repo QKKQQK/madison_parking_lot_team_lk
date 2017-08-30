@@ -134,7 +134,6 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         let session = URLSession.shared
         
         let task = session.dataTask(with: request) { (data, response, error) in
-            print("start of closure")
             
             guard case let messageResponse as HTTPURLResponse = response else {
                 print("response error")
@@ -148,7 +147,6 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
             
             switch status {
             case .ok:
-                print("success OK")
                 
                 guard let returnedData = data else {
                     print("no data")
@@ -161,12 +159,9 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
                 infos = newInfos ?? []
                 
                 if infos.count == 6 {
-                    availabilityDictionary.updateValue(infos[0].vacant_stalls, forKey: "Brayton Lot")
-                    availabilityDictionary.updateValue(infos[1].vacant_stalls, forKey: "Capitol Square North Garage")
-                    availabilityDictionary.updateValue(infos[2].vacant_stalls, forKey: "Government East Garage")
-                    availabilityDictionary.updateValue(infos[3].vacant_stalls, forKey: "Overture Center Garage")
-                    availabilityDictionary.updateValue(infos[4].vacant_stalls, forKey: "State Street Campus Garage")
-                    availabilityDictionary.updateValue(infos[5].vacant_stalls, forKey: "State Street Capitol Garage")
+                    for info in infos {
+                        availabilityDictionary.updateValue(info.vacant_stalls, forKey: info.name)
+                    }
                     DispatchQueue.main.async {
                         self.updateAllAnnotation()
                     }
@@ -188,7 +183,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
                 (placemarks, error) in
                 guard let placemark = placemarks?.first
                     else {
-                    print(error)
+                    print(error ?? "Fail to get error")
                     return
                 }
                 let lat = placemark.location?.coordinate.latitude
