@@ -105,6 +105,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        getData()
         locationManager = CLLocationManager()
         myMap.delegate = self
         locationManager?.delegate = self
@@ -113,6 +114,12 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
         initAltLocation()
         showCompass()
         showTrackingButton()
+        updateAllAnnotation()
+        //refresh()
+    }
+    
+    func refresh(){
+        getData()
         updateAllAnnotation()
     }
     
