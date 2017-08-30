@@ -57,10 +57,17 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" id="H8H-Ys-HkJ"/>
+                    <navigationItem key="navigationItem" id="H8H-Ys-HkJ">
+                        <barButtonItem key="leftBarButtonItem" title="Show Parking Lot" id="Ev8-bn-1wh">
+                            <connections>
+                                <action selector="showParkingLotTapped:" destination="BYZ-38-t0r" id="Wou-a2-ejT"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="myMap" destination="NAc-Tt-ewi" id="UHB-se-lh8"/>
                         <outlet property="navgationButton" destination="Mxn-JD-pn0" id="1cy-sa-eIB"/>
+                        <outlet property="showParkingLotButton" destination="Ev8-bn-1wh" id="1e1-Ex-Trf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

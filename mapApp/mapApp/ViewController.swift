@@ -10,20 +10,40 @@ import UIKit
 import MapKit
 
 class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDelegate{
+    @IBOutlet weak var showParkingLotButton: UIBarButtonItem!
     
+    @IBAction func showParkingLotTapped(_ sender: Any) {
+        if !showingParkingLot {
+            let center = CLLocationCoordinate2D(latitude: 43.074719, longitude: -89.384379)
+            let spans = MKCoordinateSpanMake(0.02, 0.02)
+            let region = MKCoordinateRegion(center: center, span: spans)
+            self.myMap.setRegion(region, animated: true)
+            showParkingLotButton.title = "Show User Location"
+            showingParkingLot = true
+        } else {
+            showingParkingLot = false
+            setRegionToUserLocation()
+            showParkingLotButton.title = "Show Parking Lot"
+        }
+    }
     @IBOutlet weak var navgationButton: UIBarButtonItem!
     @IBAction func navigateTapped(_ sender: Any) {
         if isNavigating {
+            showingParkingLot = false
+            showParkingLotButton.title = "Show Parking Lot"
             myMap.removeOverlays(myMap.overlays)
             isNavigating = false
             setRegionToUserLocation()
             self.navgationButton.title = "Navigation"
+            currAnnotation = nil
             return
         } else {
             guard self.currAnnotation != nil
                 else {
                 return
             }
+            showingParkingLot = false
+            showParkingLotButton.title = "Show Parking Lot"
             self.navgationButton.title = "Stop Navigation"
             self.isNavigating = true
         }
@@ -86,6 +106,7 @@ class ViewController: UIViewController,  CLLocationManagerDelegate, MKMapViewDel
     var allAnnotation : [MKAnnotation] = []
     var currAnnotation : MKAnnotation?
     var isNavigating = false
+    var showingParkingLot = false
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if !isNavigating {
